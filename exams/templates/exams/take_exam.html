@@ -1,0 +1,143 @@
+<!-- exams/templates/exams/take_exam.html -->
+{% extends 'base.html' %}
+
+{% block title %}{{ exam.title }} - Wato IMS International Portal{% endblock %}
+
+{% block extra_head %}
+<!-- MathJax for rendering math and chemistry symbols/formulas -->
+<script src="https://polyfill.io/v3/polyfill.min.js?features=es6"></script>
+<script id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+<script src="https://cdn.tailwindcss.com"></script>
+<style>
+    .option-label {
+        display: flex;
+        align-items: flex-start;
+        gap: 12px;
+        padding: 14px 18px;
+        background: #f8fafc;
+        border: 1px solid #cbd5e1;
+        border-radius: 8px;
+        cursor: pointer;
+        transition: all 0.2s ease;
+    }
+    .option-label:hover {
+        background: #f1f5f9;
+        border-color: #059669;
+    }
+    .option-label:has(input[type="radio"]:checked) {
+        background: #ecfdf5;
+        border-color: #059669;
+        box-shadow: 0 0 0 1px #059669;
+    }
+    .sticky-timer {
+        position: sticky;
+        top: 20px;
+        z-index: 50;
+        background: rgba(255, 255, 255, 0.95);
+        backdrop-filter: blur(8px);
+        border: 1px solid #cbd5e1;
+        padding: 12px 20px;
+        border-radius: 12px;
+        box-shadow: 0 4px 12px rgba(0,0,0,0.05);
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 20px;
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="max-w-4xl mx-auto px-4 py-8">
+    
+    <!-- Sticky Countdown Timer Bar -->
+    <div class="sticky-timer">
+        <div class="flex items-center gap-2">
+            <span class="w-3 h-3 bg-emerald-500 rounded-full animate-pulse"></span>
+            <span class="text-sm font-bold text-slate-700 uppercase tracking-wider">Live Examination Portal</span>
+        </div>
+        <div class="text-sm font-mono font-bold text-emerald-700 bg-emerald-50 px-4 py-1.5 rounded-md border border-emerald-200">
+            ⏳ Time Remaining: <span id="countdown-timer">Loading...</span>
+        </div>
+    </div>
+
+    <!-- Executive Header Banner -->
+    <div class="bg-gradient-to-r from-emerald-800 to-emerald-700 text-white rounded-2xl p-8 shadow-xl mb-8">
+        <h1 class="text-3xl font-extrabold tracking-tight">{{ exam.title }}</h1>
+        <p class="text-emerald-200 text-sm mt-1">Subject: {{ exam.subject }} | Grade Level: Grade {{ exam.grade_level }}</p>
+    </div>
+
+    <!-- Examination Form -->
+    <form method="POST" id="examForm" class="space-y-6">
+        {% csrf_token %}
+        
+        {% for q in questions %}
+        <div class="bg-white border border-slate-200 border-l-4 border-l-emerald-600 rounded-xl p-6 shadow-sm">
+            <div class="flex items-start justify-between gap-4 mb-4">
+                <p class="font-bold text-base text-slate-800">
+                    <span class="inline-block bg-emerald-100 text-emerald-800 font-extrabold px-2.5 py-1 rounded-md mr-2 text-sm">Q{{ forloop.counter0|add:1 }}</span>
+                    {{ q.text|safe }}
+                </p>
+                <span class="text-xs font-semibold bg-slate-100 text-slate-600 px-2.5 py-1 rounded border border-slate-200 whitespace-nowrap">{{ q.marks }} Marks</span>
+            </div>
+
+            {% if q.question_image %}
+            <div class="my-4 p-2 bg-slate-50 border border-slate-200 rounded-lg inline-block">
+                <img src="{{ q.question_image.url }}" alt="Question Diagram" class="max-h-64 rounded object-contain">
+            </div>
+            {% endif %}
+            
+            <div class="grid grid-cols-1 gap-3 mt-4">
+                <label class="option-label">
+                    <input type="radio" name="question_{{ q.id }}" value="A" required class="mt-1 text-emerald-600 focus:ring-emerald-500 h-4 w-4">
+                    <div class="flex-1"><span class="font-bold text-slate-700 mr-2">A.</span> {{ q.option_a|safe }}</div>
+                </label>
+                <label class="option-label">
+                    <input type="radio" name="question_{{ q.id }}" value="B" class="mt-1 text-emerald-600 focus:ring-emerald-500 h-4 w-4">
+                    <div class="flex-1"><span class="font-bold text-slate-700 mr-2">B.</span> {{ q.option_b|safe }}</div>
+                </label>
+                <label class="option-label">
+                    <input type="radio" name="question_{{ q.id }}" value="C" class="mt-1 text-emerald-600 focus:ring-emerald-500 h-4 w-4">
+                    <div class="flex-1"><span class="font-bold text-slate-700 mr-2">C.</span> {{ q.option_c|safe }}</div>
+                </label>
+                <label class="option-label">
+                    <input type="radio" name="question_{{ q.id }}" value="D" class="mt-1 text-emerald-600 focus:ring-emerald-500 h-4 w-4">
+                    <div class="flex-1"><span class="font-bold text-slate-700 mr-2">D.</span> {{ q.option_d|safe }}</div>
+                </label>
+            </div>
+        </div>
+        {% endfor %}
+
+        {% if questions %}
+        <div class="flex justify-end pt-4 pb-12">
+            <button type="submit" onclick="return confirm('Are you sure you want to submit your final answers?');" class="bg-emerald-600 hover:bg-emerald-700 text-white font-bold px-8 py-4 rounded-xl shadow-lg transition text-base">
+                Submit Final Examination Paper
+            </button>
+        </div>
+        {% endif %}
+    </form>
+</div>
+
+<!-- JavaScript Timer & Auto-Submit Logic -->
+<script>
+    let totalMinutes = {{ duration_minutes|default:60 }};
+    let timeRemaining = totalMinutes * 60;
+
+    const timerDisplay = document.getElementById('countdown-timer');
+    const examForm = document.getElementById('examForm');
+
+    const countdownInterval = setInterval(() => {
+        let minutes = Math.floor(timeRemaining / 60);
+        let seconds = timeRemaining % 60;
+
+        timerDisplay.textContent = `${minutes}:${seconds < 10 ? '0' : ''}${seconds}`;
+
+        if (timeRemaining <= 0) {
+            clearInterval(countdownInterval);
+            alert("Time is up! Your examination paper will now be automatically submitted.");
+            examForm.submit();
+        }
+        timeRemaining--;
+    }, 1000);
+</script>
+{% endblock %}

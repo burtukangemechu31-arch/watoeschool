@@ -1,0 +1,100 @@
+<!-- finance/templates/finance/student_ledger.html -->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Student Financial Ledger - Wato IMS</title>
+    <style>
+        body { font-family: 'Segoe UI', Arial, sans-serif; background: #f4f6f8; color: #333; padding: 40px; }
+        .sheet { max-width: 850px; margin: auto; background: #fff; border: 2px solid #e65100; padding: 40px; border-radius: 8px; box-shadow: 0 4px 12px rgba(0,0,0,0.08); }
+        .header { text-align: center; border-bottom: 2px solid #e65100; padding-bottom: 15px; margin-bottom: 25px; }
+        .header h1 { color: #e65100; font-size: 22px; margin: 0 0 5px 0; text-transform: uppercase; }
+        .info-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 15px; margin-bottom: 25px; background: #fff3e0; padding: 15px; border-radius: 6px; }
+        table { width: 100%; border-collapse: collapse; margin-bottom: 20px; }
+        th, td { border: 1px solid #ddd; padding: 10px; font-size: 14px; text-align: left; }
+        th { background: #e65100; color: white; }
+        .summary-box { display: flex; justify-content: space-between; background: #fafafa; border: 1px solid #ddd; padding: 15px; border-radius: 6px; font-weight: bold; font-size: 15px; margin-top: 20px; }
+        .due { color: #d32f2f; }
+        .paid { color: #2e7d32; }
+        .back-btn { display: inline-block; margin-bottom: 20px; color: #1b5e20; text-decoration: none; font-weight: bold; }
+    </style>
+</head>
+<body>
+
+    <div style="max-width: 850px; margin: auto;">
+        <a href="/" class="back-btn">← Back to Central Dashboard</a>
+    </div>
+
+    <div class="sheet">
+        <div class="header">
+            <h1>Wato Secondary School - Finance Office</h1>
+            <p>Student Fee Statement & Payment Ledger</p>
+        </div>
+
+        <div class="info-grid">
+            <div>
+                <p><strong>Student ID:</strong> {{ student.student_id }}</p>
+                <p><strong>Full Name:</strong> {{ student.user.get_full_name|default:student.user.username }}</p>
+            </div>
+            <div>
+                <p><strong>Program:</strong> {{ student.program.get_name_display }}</p>
+                <p><strong>Grade & Section:</strong> {{ student.section.name|default:"Unassigned" }}</p>
+            </div>
+        </div>
+
+        <h3>Fee Obligations</h3>
+        <table>
+            <thead>
+                <tr>
+                    <th>Fee Description</th>
+                    <th>Amount (ETB)</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for cat in fee_categories %}
+                <tr>
+                    <td>{{ cat.name }}</td>
+                    <td>{{ cat.amount }} ETB</td>
+                </tr>
+                {% empty %}
+                <tr><td colspan="2" style="text-align: center; color: #777;">No fee categories defined for this program.</td></tr>
+                {% endfor %}
+            </tbody>
+        </table>
+
+        <h3>Recorded Payments</h3>
+        <table>
+            <thead>
+                <tr>
+                    <th>Receipt Number</th>
+                    <th>Fee Category</th>
+                    <th>Payment Date</th>
+                    <th>Received By</th>
+                    <th>Amount Paid (ETB)</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for payment in payments %}
+                <tr>
+                    <td><strong>{{ payment.receipt_number }}</strong></td>
+                    <td>{{ payment.fee_category.name }}</td>
+                    <td>{{ payment.payment_date }}</td>
+                    <td>{{ payment.received_by }}</td>
+                    <td class="paid">{{ payment.amount_paid }} ETB</td>
+                </tr>
+                {% empty %}
+                <tr><td colspan="5" style="text-align: center; color: #777;">No payments recorded yet.</td></tr>
+                {% endfor %}
+            </tbody>
+        </table>
+
+        <div class="summary-box">
+            <span>Total Obligation: {{ total_obligation }} ETB</span>
+            <span>Total Paid: <span class="paid">{{ total_paid }} ETB</span></span>
+            <span>Balance Due: <span class="due">{{ balance_due }} ETB</span></span>
+        </div>
+    </div>
+
+</body>
+</html>

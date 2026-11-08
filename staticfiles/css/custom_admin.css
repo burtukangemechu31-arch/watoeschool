@@ -1,0 +1,15 @@
+/* static/css/custom_admin.css */
+
+/* Target the header/navigation container and give it Wato Forest Green background */
+header, nav, .unfold-horizontal-nav, [class*="bg-primary"] {
+    background-color: #059669 !important;
+}
+
+/* Ensure text and links in the top header bar are clearly readable in white */
+header a, nav a, .unfold-horizontal-nav span, .unfold-horizontal-nav a {
+    color: #ffffff !important;
+}
+
+header a:hover, nav a:hover {
+    color: #d1fae5 !important;
+}

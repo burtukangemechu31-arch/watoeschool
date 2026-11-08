@@ -1,0 +1,159 @@
+<!-- academics/templates/academics/report_card.html -->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Official Report Card & Certificate - Wato Secondary School</title>
+    <!-- Tailwind CSS CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        emerald: {
+                            600: '#059669', // Wato Forest Green Accent
+                            700: '#047857',
+                            800: '#065f46',
+                            900: '#064e3b',
+                        }
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        @media print {
+            .no-print {
+                display: none !important;
+            }
+            body {
+                background-color: #ffffff !important;
+                padding: 0 !important;
+            }
+            .print-container {
+                box-shadow: none !important;
+                border: 1px solid #e2e8f0 !important;
+                max-width: 100% !important;
+                width: 100% !important;
+                margin: 0 !important;
+                padding: 24px !important;
+            }
+        }
+    </style>
+</head>
+<body class="bg-slate-100 text-slate-800 antialiased min-h-screen py-8 px-4 font-sans flex flex-col items-center">
+
+    <!-- Action Bar (Hidden on Print) -->
+    <div class="no-print max-w-3xl w-full mb-6 flex justify-between items-center bg-white p-4 rounded-xl shadow-sm border border-slate-200">
+        <a href="{% url 'student_dashboard' %}" class="bg-slate-100 hover:bg-slate-200 text-slate-700 text-xs font-semibold px-4 py-2 rounded-lg transition">
+            ← Back to Central Dashboard
+        </a>
+        <div class="flex items-center gap-2">
+            <button onclick="window.print()" class="bg-emerald-600 hover:bg-emerald-700 text-white text-xs font-bold px-4 py-2 rounded-lg shadow-sm transition flex items-center gap-1.5">
+                <span>🖨️</span> Print Official Card
+            </button>
+            <a href="{% url 'download_report_card' student.student_id 1 %}" class="bg-slate-900 hover:bg-slate-800 text-white text-xs font-bold px-4 py-2 rounded-lg shadow-sm transition flex items-center gap-1.5">
+                <span>📥</span> Download PDF
+            </a>
+        </div>
+    </div>
+
+    <!-- Official Printable Sheet Container -->
+    <div class="print-container bg-white max-w-3xl w-full p-8 rounded-2xl shadow-lg border-2 border-emerald-900 text-xs">
+        
+        <!-- Header -->
+        <div class="text-center border-b-2 border-emerald-800 pb-4 mb-4">
+            <div class="flex justify-center items-center gap-3 mb-1">
+                <div class="w-10 h-10 bg-emerald-900 text-white rounded-full flex items-center justify-center font-bold text-base shadow-sm">🛡️</div>
+                <h1 class="text-xl font-black text-emerald-900 uppercase tracking-wide">Wato Secondary School</h1>
+            </div>
+            <p class="text-[11px] text-slate-500">Alem Gena, Oromia Regional State, Ethiopia</p>
+            <p class="text-xs font-bold text-emerald-800 mt-1 uppercase tracking-wider">Student Annual Academic Report Card & Grade Promotion Certificate</p>
+        </div>
+
+        <!-- Student Information Grid -->
+        <div class="grid grid-cols-2 gap-3 bg-slate-50 p-4 rounded-xl border border-slate-200 mb-5">
+            <div class="space-y-1">
+                <p><strong class="text-slate-700">Student Name:</strong> {{ student.full_name|default:student.user.get_full_name }}</p>
+                <p><strong class="text-slate-700">Student ID:</strong> {{ student.student_id }}</p>
+                <p><strong class="text-slate-700">Region / Nation:</strong> {{ student.region|default:"Oromia" }} / Ethiopian</p>
+                <p><strong class="text-slate-700">Age / Sex:</strong> {{ student.age }} / {{ student.sex }}</p>
+            </div>
+            <div class="space-y-1">
+                <p><strong class="text-slate-700">Grade Level & Section:</strong> Grade {{ student.grade_level }} (Section {{ student.section.name|default:"A" }})</p>
+                <p><strong class="text-slate-700">Guardian Name:</strong> {{ student.guardian_name|default:"N/A" }}</p>
+                <p><strong class="text-slate-700">Homeroom Teacher:</strong> {{ homeroom_teacher_name|default:"Assignee Teacher" }}</p>
+                <p><strong class="text-slate-700">Academic Year:</strong> 2019 E.C.</p>
+            </div>
+        </div>
+
+        <!-- Academic Performance Table -->
+        <table class="w-full border-collapse border border-slate-300 text-center mb-5">
+            <thead>
+                <tr class="bg-emerald-900 text-white text-[11px]">
+                    <th class="border border-slate-300 p-2 text-left pl-3">Subject</th>
+                    <th class="border border-slate-300 p-2">Sem 1</th>
+                    <th class="border border-slate-300 p-2">Sem 2</th>
+                    <th class="border border-slate-300 p-2">Annual Total</th>
+                    <th class="border border-slate-300 p-2 bg-emerald-800">Average</th>
+                    <th class="border border-slate-300 p-2 bg-emerald-800">Letter Grade</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for item in subject_performance %}
+                <tr class="hover:bg-slate-50 transition">
+                    <td class="border border-slate-300 p-2 text-left pl-3 font-semibold text-slate-800">{{ item.subject }}</td>
+                    <td class="border border-slate-300 p-2 text-slate-600">{{ item.sem1|default:"-" }}</td>
+                    <td class="border border-slate-300 p-2 text-slate-600">{{ item.sem2|default:"-" }}</td>
+                    <td class="border border-slate-300 p-2 font-bold text-slate-900">{{ item.annual_total|default:"-" }}</td>
+                    <td class="border border-slate-300 p-2 text-emerald-700 font-bold">{{ item.average }}%</td>
+                    <td class="border border-slate-300 p-2 font-extrabold text-slate-900">{{ item.letter_grade }}</td>
+                </tr>
+                {% empty %}
+                <tr>
+                    <td colspan="6" class="p-4 text-slate-400 italic">No academic assessment records found for this student.</td>
+                </tr>
+                {% endfor %}
+                <tr class="bg-slate-100 font-bold border-t-2 border-slate-300">
+                    <td colspan="3" class="border border-slate-300 p-2 text-right pr-4 uppercase text-[10px] text-slate-600">Overall Summary:</td>
+                    <td class="border border-slate-300 p-2 text-slate-900 font-extrabold">{{ total_score|default:"--" }}</td>
+                    <td class="border border-slate-300 p-2 text-emerald-800 font-extrabold text-sm">{{ average_score|default:"--" }}%</td>
+                    <td class="border border-slate-300 p-2 text-slate-900">Rank: {{ rank|default:"--" }}</td>
+                </tr>
+            </tbody>
+        </table>
+
+        <!-- Grade-to-Grade Promotion Certificate Box -->
+        <div class="bg-emerald-50 border-2 border-emerald-600 p-3.5 rounded-xl text-center mb-6">
+            <p class="text-[10px] uppercase font-bold text-emerald-800 tracking-widest">Certificate of Promotion</p>
+            <p class="text-sm font-extrabold text-emerald-950 mt-1 uppercase">
+                {{ promotion_status_text|default:"PROMOTED TO NEXT GRADE LEVEL" }}
+            </p>
+        </div>
+
+        <!-- Official Signatures & Stamp -->
+        <div class="grid grid-cols-2 gap-6 pt-4 border-t border-slate-300 text-[11px] mt-6">
+            <div class="space-y-4">
+                <div>
+                    <p><strong>Homeroom Teacher:</strong> {{ homeroom_teacher_name|default:"_______________________" }}</p>
+                    <p class="mt-2">Signature: ______________________ Date: ____/____/20___ E.C.</p>
+                </div>
+                <div>
+                    <p><strong>School Director:</strong> {{ director_name|default:"_______________________" }}</p>
+                    <p class="mt-2">Signature: ______________________ Date: ____/____/20___ E.C.</p>
+                </div>
+            </div>
+            <div class="flex items-center justify-center">
+                <div class="w-full h-28 border-2 border-dashed border-slate-400 rounded-xl flex flex-col items-center justify-center p-2 text-center text-slate-400 uppercase tracking-widest text-[9px] bg-slate-50/50">
+                    <span>🛡️ Wato Secondary School</span>
+                    <span class="mt-1 font-bold">[ Official School Seal / Stamp ]</span>
+                </div>
+            </div>
+        </div>
+
+    </div>
+
+</body>
+</html>

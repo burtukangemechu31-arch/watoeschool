@@ -1,0 +1,43 @@
+<!-- templates/dashboard.html -->
+{% extends 'base.html' %}
+
+{% block title %}Central Dashboard - Wato IMS{% endblock %}
+
+{% block content %}
+<div style="background: white; padding: 30px; border-radius: 8px; box-shadow: 0 2px 10px rgba(0,0,0,0.08);">
+    <h2 style="color: #1b5e20; margin-bottom: 8px;">Wato Secondary School Management System</h2>
+    <p style="color: #666; margin-bottom: 25px;">Welcome back, <strong>{{ user.username }}</strong>! Access quick portal services below.</p>
+
+    <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); gap: 20px;">
+        <a href="/admin/" style="background: #e8f5e9; border: 1px solid #a5d6a7; padding: 20px; border-radius: 6px; text-decoration: none; color: #1b5e20;">
+            <h3 style="margin-bottom: 6px;">📋 Administration</h3>
+            <p style="font-size: 13px; color: #444;">Manage users, academic years, sections, and finance logs.</p>
+        </a>
+
+        <a href="{% url 'library_catalog' %}" style="background: #e1f5fe; border: 1px solid #81d4fa; padding: 20px; border-radius: 6px; text-decoration: none; color: #0277bd;">
+            <h3 style="margin-bottom: 6px;">📚 Library & E-Books</h3>
+            <p style="font-size: 13px; color: #444;">Textbook borrowing and digital PDF repository.</p>
+        </a>
+
+        <a href="{% url 'attendance_index' %}" style="background: #e0f2f1; border: 1px solid #80cbc4; padding: 20px; border-radius: 6px; text-decoration: none; color: #00796b;">
+            <h3 style="margin-bottom: 6px;">📅 Daily Attendance</h3>
+            <p style="font-size: 13px; color: #444;">Record and review student presence and punctuality.</p>
+        </a>
+
+        <a href="{% url 'guard_dashboard' %}" style="background: #ffebee; border: 1px solid #ef9a9a; padding: 20px; border-radius: 6px; text-decoration: none; color: #c62828;">
+            <h3 style="margin-bottom: 6px;">🛡️ Guard Gate Control</h3>
+            <p style="font-size: 13px; color: #444;">Student departure verification and return status.</p>
+        </a>
+
+        <a href="{% url 'inventory_dashboard' %}" style="background: #fff3e0; border: 1px solid #ffcc80; padding: 20px; border-radius: 6px; text-decoration: none; color: #e65100;">
+            <h3 style="margin-bottom: 6px;">📦 Property Inventory</h3>
+            <p style="font-size: 13px; color: #444;">School equipment, IT lab assets, and furniture audit.</p>
+        </a>
+
+        <a href="{% url 'admin_reports_dashboard' %}" style="background: #ede7f6; border: 1px solid #d1c4e9; padding: 20px; border-radius: 6px; text-decoration: none; color: #512da8;">
+            <h3 style="margin-bottom: 6px;">📊 Executive Reports</h3>
+            <p style="font-size: 13px; color: #444;">Institutional metrics, enrollment summaries, and revenue logs.</p>
+        </a>
+    </div>
+</div>
+{% endblock %}

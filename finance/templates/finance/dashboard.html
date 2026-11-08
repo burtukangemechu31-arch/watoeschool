@@ -1,0 +1,93 @@
+<!-- finance/templates/finance/dashboard.html -->
+{% extends 'base.html' %}
+
+{% block title %}Finance & Fee Collection - Wato IMS{% endblock %}
+
+{% block content %}
+<div class="max-w-6xl mx-auto px-4 py-8">
+    <a href="/" class="text-sm font-semibold text-emerald-600 hover:underline mb-4 inline-block">← Back to Central Dashboard</a>
+
+    <!-- Header Banner -->
+    <div class="bg-gradient-to-r from-emerald-800 to-emerald-700 text-white rounded-2xl p-8 shadow-xl mb-8 flex justify-between items-center">
+        <div>
+            <h1 class="text-3xl font-extrabold tracking-tight">Finance & Fee Management</h1>
+            <p class="text-emerald-200 text-sm mt-1">Track tuition structures, student payment obligations, and official transaction receipts.</p>
+        </div>
+        <div class="hidden md:block text-5xl">💰</div>
+    </div>
+
+    <!-- Student Fee Status Section -->
+    {% if student_fees %}
+    <div class="bg-white border border-slate-200 rounded-2xl p-6 mb-8 shadow-sm">
+        <h2 class="text-xl font-bold text-slate-900 mb-4">Your Fee Obligations</h2>
+        <div class="overflow-x-auto">
+            <table class="w-full text-left border-collapse">
+                <thead>
+                    <tr class="border-b border-slate-200 text-xs font-bold text-slate-600 uppercase bg-slate-50">
+                        <th class="p-3">Fee Category</th>
+                        <th class="p-3">Assigned Date</th>
+                        <th class="p-3">Amount</th>
+                        <th class="p-3">Status</th>
+                    </tr>
+                </thead>
+                <tbody class="divide-y divide-slate-100 text-sm text-slate-700">
+                    {% for fee in student_fees %}
+                    <tr>
+                        <td class="p-3 font-medium text-slate-900">{{ fee.fee_category.name }}</td>
+                        <td class="p-3 text-slate-500">{{ fee.assigned_date|date:"M d, Y" }}</td>
+                        <td class="p-3 font-mono font-semibold">{{ fee.fee_category.amount }} ETB</td>
+                        <td class="p-3">
+                            {% if fee.is_paid %}
+                            <span class="bg-emerald-50 text-emerald-700 border border-emerald-200 px-2.5 py-1 rounded-full text-xs font-bold">Paid</span>
+                            {% else %}
+                            <span class="bg-amber-50 text-amber-700 border border-amber-200 px-2.5 py-1 rounded-full text-xs font-bold">Pending</span>
+                            {% endif %}
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+    {% endif %}
+
+    <!-- Payment History / Receipts Section -->
+    <div class="bg-white border border-slate-200 rounded-2xl p-6 shadow-sm">
+        <h2 class="text-xl font-bold text-slate-900 mb-4">Transaction Payment Records</h2>
+        <div class="overflow-x-auto">
+            <table class="w-full text-left border-collapse">
+                <thead>
+                    <tr class="border-b border-slate-200 text-xs font-bold text-slate-600 uppercase bg-slate-50">
+                        <th class="p-3">Receipt No</th>
+                        <th class="p-3">Student</th>
+                        <th class="p-3">Category</th>
+                        <th class="p-3">Amount Paid</th>
+                        <th class="p-3">Date</th>
+                        <th class="p-3">Action</th>
+                    </tr>
+                </thead>
+                <tbody class="divide-y divide-slate-100 text-sm text-slate-700">
+                    {% for payment in payments %}
+                    <tr>
+                        <td class="p-3 font-mono font-bold text-emerald-700">{{ payment.receipt_number }}</td>
+                        <td class="p-3 font-medium text-slate-900">{{ payment.student }}</td>
+                        <td class="p-3">{{ payment.fee_category.name }}</td>
+                        <td class="p-3 font-mono font-semibold text-emerald-600">{{ payment.amount_paid }} ETB</td>
+                        <td class="p-3 text-slate-500">{{ payment.payment_date|date:"M d, Y H:i" }}</td>
+                        <td class="p-3">
+                            <a href="{% url 'payment_receipt' payment.id %}" target="_blank" class="bg-slate-100 hover:bg-slate-200 text-slate-700 font-semibold px-3 py-1.5 rounded-lg text-xs transition">
+                                View Receipt
+                            </a>
+                        </td>
+                    </tr>
+                    {% empty %}
+                    <tr>
+                        <td colspan="6" class="text-center py-8 text-slate-400 text-sm">No payment records logged yet.</td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+{% endblock %}

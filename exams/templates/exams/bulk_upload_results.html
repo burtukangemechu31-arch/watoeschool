@@ -1,0 +1,40 @@
+<!-- exams/templates/exams/bulk_upload_results.html -->
+{% extends 'base.html' %}
+
+{% block title %}Bulk Upload Results - Wato IMS{% endblock %}
+
+{% block content %}
+<div class="max-w-xl mx-auto px-4 py-12">
+    <div class="bg-white rounded-2xl shadow-xl border border-slate-200 p-8">
+        <a href="{% url 'exams_dashboard' %}" class="text-sm font-semibold text-emerald-600 hover:underline mb-4 inline-block">← Back to Examinations</a>
+        
+        <h1 class="text-2xl font-extrabold text-slate-900 mb-2">Bulk Upload Student Results</h1>
+        <p class="text-sm text-slate-600 mb-6">Upload student examination scores and completion statuses in bulk via CSV.</p>
+        
+        <!-- Template Download Box -->
+        <div class="bg-emerald-50 border border-emerald-200 rounded-xl p-4 mb-6 flex items-center justify-between">
+            <div>
+                <p class="text-xs font-bold text-emerald-800 uppercase">Need the result format?</p>
+                <p class="text-xs text-emerald-600 mt-0.5">Download the standardized results template.</p>
+            </div>
+            <a href="{% url 'download_result_template' %}" class="bg-emerald-600 hover:bg-emerald-700 text-white font-bold text-xs px-4 py-2 rounded-lg shadow transition">
+                Download CSV Template
+            </a>
+        </div>
+
+        <!-- Upload Form -->
+        <form method="POST" enctype="multipart/form-data" class="space-y-5">
+            {% csrf_token %}
+            <div>
+                <label class="block text-xs font-semibold text-slate-700 uppercase tracking-wider mb-2">Select CSV File</label>
+                <input type="file" name="csv_file" accept=".csv" required 
+                       class="w-full text-sm text-slate-500 file:mr-4 file:py-2.5 file:px-4 file:rounded-xl file:border-0 file:text-sm file:font-semibold file:bg-emerald-50 file:text-emerald-700 hover:file:bg-emerald-100 border border-slate-300 rounded-xl p-2">
+            </div>
+
+            <button type="submit" class="w-full bg-emerald-600 hover:bg-emerald-700 text-white font-bold py-3.5 rounded-xl shadow-lg transition text-base">
+                Upload & Process Results
+            </button>
+        </form>
+    </div>
+</div>
+{% endblock %}

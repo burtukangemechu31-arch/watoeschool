@@ -1,0 +1,82 @@
+<!-- library/templates/library/catalog.html -->
+{% extends 'base.html' %}
+
+{% block title %}Library & Digital Resource Center - Wato IMS{% endblock %}
+
+{% block content %}
+<div class="max-w-6xl mx-auto px-4 py-8">
+    <a href="/" class="text-sm font-semibold text-emerald-600 hover:underline mb-4 inline-block">← Back to Central Dashboard</a>
+
+    <!-- Header Banner -->
+    <div class="bg-gradient-to-r from-emerald-800 to-emerald-700 text-white rounded-2xl p-8 shadow-xl mb-8 flex justify-between items-center">
+        <div>
+            <h1 class="text-3xl font-extrabold tracking-tight">Wato Library & Digital Repository</h1>
+            <p class="text-emerald-200 text-sm mt-1">Browse physical textbooks, reference materials, and downloadable e-book assets.</p>
+        </div>
+        <div class="hidden md:block text-5xl">📚</div>
+    </div>
+
+    <!-- Search Bar -->
+    <form method="GET" class="mb-8 flex gap-3">
+        <input type="text" name="q" value="{{ query }}" placeholder="Search by book title or author..." 
+               class="flex-1 bg-white border border-slate-300 rounded-xl px-4 py-3 text-sm focus:outline-none focus:ring-2 focus:ring-emerald-500">
+        <button type="submit" class="bg-emerald-600 hover:bg-emerald-700 text-white font-bold px-6 py-3 rounded-xl shadow transition text-sm">
+            Search Catalog
+        </button>
+    </form>
+
+    <!-- Student Active Loans Section (if applicable) -->
+    {% if my_borrows %}
+    <div class="bg-emerald-50 border border-emerald-200 rounded-2xl p-6 mb-8">
+        <h2 class="text-lg font-bold text-emerald-900 mb-3">📖 Your Active Borrowed Books</h2>
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+            {% for loan in my_borrows %}
+            <div class="bg-white p-4 rounded-xl border border-emerald-100 shadow-sm flex justify-between items-center">
+                <div>
+                    <p class="font-bold text-slate-800 text-sm">{{ loan.book.title }}</p>
+                    <p class="text-xs text-slate-500">Due Date: {{ loan.due_date|date:"M d, Y" }}</p>
+                </div>
+                <span class="text-xs font-semibold bg-amber-100 text-amber-800 px-2.5 py-1 rounded-full">Borrowed</span>
+            </div>
+            {% endfor %}
+        </div>
+    </div>
+    {% endif %}
+
+    <!-- Book Grid -->
+    <h2 class="text-xl font-bold text-slate-800 mb-4">Available Library Inventory</h2>
+    <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+        {% for book in books %}
+        <div class="bg-white border border-slate-200 rounded-2xl p-6 shadow-sm flex flex-col justify-between">
+            <div>
+                <div class="flex justify-between items-start mb-2">
+                    <span class="text-xs font-bold bg-slate-100 text-slate-700 px-2.5 py-1 rounded">{{ book.category.name|default:"General" }}</span>
+                    <span class="text-xs font-semibold {% if book.available_copies > 0 %}text-emerald-600 bg-emerald-50 border border-emerald-200{% else %}text-red-600 bg-red-50 border border-red-200{% endif %} px-2 py-0.5 rounded">
+                        {{ book.available_copies }} / {{ book.total_copies }} Available
+                    </span>
+                </div>
+                <h3 class="font-bold text-slate-900 text-base mt-2">{{ book.title }}</h3>
+                <p class="text-xs text-slate-600 mt-0.5">Author: {{ book.author }}</p>
+                <p class="text-xs text-slate-500 mt-2 font-mono">ISBN: {{ book.isbn }}</p>
+                <p class="text-xs text-slate-500">Shelf: {{ book.shelf_location|default:"Main Reference" }}</p>
+            </div>
+
+            <div class="mt-6 pt-4 border-t border-slate-100 flex items-center justify-between">
+                <span class="text-xs text-slate-400">Wato IMS Collection</span>
+                {% if book.digital_file %}
+                <a href="{% url 'download_digital_book' book.id %}" target="_blank" class="bg-emerald-600 hover:bg-emerald-700 text-white text-xs font-bold px-3 py-2 rounded-lg shadow transition">
+                    Download E-Book
+                </a>
+                {% else %}
+                <span class="text-xs text-slate-400 italic">Physical Copy Only</span>
+                {% endif %}
+            </div>
+        </div>
+        {% empty %}
+        <div class="col-span-3 text-center py-12 bg-white rounded-2xl border border-slate-200">
+            <p class="text-slate-500 text-sm">No books found matching your criteria.</p>
+        </div>
+        {% endfor %}
+    </div>
+</div>
+{% endblock %}

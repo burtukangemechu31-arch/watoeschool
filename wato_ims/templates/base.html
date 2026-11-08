@@ -1,0 +1,40 @@
+<!-- templates/base.html -->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% block title %}Wato Secondary School IMS{% endblock %}</title>
+    <style>
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+        body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; background: #f0f2f5; color: #333; }
+        
+        /* Unified Top Navbar */
+        .navbar { background: #1b5e20; color: white; padding: 12px 24px; display: flex; justify-content: space-between; align-items: center; box-shadow: 0 2px 5px rgba(0,0,0,0.2); }
+        .navbar .brand { font-size: 20px; font-weight: bold; text-decoration: none; color: white; display: flex; align-items: center; gap: 8px; }
+        .nav-links { display: flex; gap: 18px; list-style: none; flex-wrap: wrap; }
+        .nav-links a { color: #e8f5e9; text-decoration: none; font-size: 14px; font-weight: 500; transition: color 0.2s; }
+        .nav-links a:hover { color: #ffffff; text-decoration: underline; }
+        
+        .container { max-width: 1200px; margin: 30px auto; padding: 0 20px; }
+    </style>
+    {% block extra_head %}{% endblock %}
+</head>
+<body>
+    <header class="navbar">
+        <a href="/" class="brand">🏫 Wato IMS</a>
+        <ul class="nav-links">
+            <li><a href="/admin/">Admin Portal</a></li>
+            <li><a href="{% url 'library_catalog' %}">Library</a></li>
+            <li><a href="{% url 'attendance_index' %}">Attendance</a></li>
+            <li><a href="{% url 'guard_dashboard' %}">Guard Exits</a></li>
+            <li><a href="{% url 'inventory_dashboard' %}">Inventory</a></li>
+            <li><a href="{% url 'admin_reports_dashboard' %}">Reports</a></li>
+        </ul>
+    </header>
+
+    <main class="container">
+        {% block content %}{% endblock %}
+    </main>
+</body>
+</html>

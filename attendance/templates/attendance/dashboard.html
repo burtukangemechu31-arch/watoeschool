@@ -1,0 +1,95 @@
+<!-- attendance/templates/attendance/dashboard.html -->
+{% extends 'base.html' %}
+
+{% block title %}Attendance & Gate Security - Wato IMS{% endblock %}
+
+{% block content %}
+<div class="max-w-6xl mx-auto px-4 py-8">
+    <a href="/" class="text-sm font-semibold text-emerald-600 hover:underline mb-4 inline-block">← Back to Central Dashboard</a>
+
+    <!-- Header Banner -->
+    <div class="bg-gradient-to-r from-emerald-800 to-emerald-700 text-white rounded-2xl p-8 shadow-xl mb-8 flex justify-between items-center">
+        <div>
+            <h1 class="text-3xl font-extrabold tracking-tight">Attendance & Campus Security</h1>
+            <p class="text-emerald-200 text-sm mt-1">Monitor daily classroom attendance rosters and student gate check-in/check-out logs.</p>
+        </div>
+        <div class="hidden md:block text-5xl">🛡️</div>
+    </div>
+
+    <!-- Classroom Attendance Table -->
+    <div class="bg-white border border-slate-200 rounded-2xl p-6 mb-8 shadow-sm">
+        <h2 class="text-xl font-bold text-slate-900 mb-4">Classroom Attendance Logs</h2>
+        <div class="overflow-x-auto">
+            <table class="w-full text-left border-collapse">
+                <thead>
+                    <tr class="border-b border-slate-200 text-xs font-bold text-slate-600 uppercase bg-slate-50">
+                        <th class="p-3">Student</th>
+                        <th class="p-3">Section</th>
+                        <th class="p-3">Date</th>
+                        <th class="p-3">Status</th>
+                        <th class="p-3">Remarks</th>
+                    </tr>
+                </thead>
+                <tbody class="divide-y divide-slate-100 text-sm text-slate-700">
+                    {% for record in attendance_records %}
+                    <tr>
+                        <td class="p-3 font-medium text-slate-900">{{ record.student }}</td>
+                        <td class="p-3">{{ record.section.name }}</td>
+                        <td class="p-3 text-slate-500">{{ record.date|date:"M d, Y" }}</td>
+                        <td class="p-3">
+                            <span class="px-2.5 py-1 rounded-full text-xs font-bold 
+                                {% if record.status == 'Present' %}bg-emerald-50 text-emerald-700 border border-emerald-200
+                                {% elif record.status == 'Absent' %}bg-red-50 text-red-700 border border-red-200
+                                {% elif record.status == 'Late' %}bg-amber-50 text-amber-700 border border-amber-200
+                                {% else %}bg-blue-50 text-blue-700 border border-blue-200{% endif %}">
+                                {{ record.status }}
+                            </span>
+                        </td>
+                        <td class="p-3 text-slate-500">{{ record.remarks|default:"None" }}</td>
+                    </tr>
+                    {% empty %}
+                    <tr>
+                        <td colspan="5" class="text-center py-8 text-slate-400 text-sm">No attendance records logged yet.</td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+    <!-- Gate Security Check-In/Out Logs -->
+    <div class="bg-white border border-slate-200 rounded-2xl p-6 shadow-sm">
+        <h2 class="text-xl font-bold text-slate-900 mb-4">Campus Gate Security Logs</h2>
+        <div class="overflow-x-auto">
+            <table class="w-full text-left border-collapse">
+                <thead>
+                    <tr class="border-b border-slate-200 text-xs font-bold text-slate-600 uppercase bg-slate-50">
+                        <th class="p-3">Student</th>
+                        <th class="p-3">Direction</th>
+                        <th class="p-3">Timestamp</th>
+                        <th class="p-3">Guard Notes</th>
+                    </tr>
+                </thead>
+                <tbody class="divide-y divide-slate-100 text-sm text-slate-700">
+                    {% for log in gate_logs %}
+                    <tr>
+                        <td class="p-3 font-medium text-slate-900">{{ log.student }}</td>
+                        <td class="p-3">
+                            <span class="px-2.5 py-1 rounded-full text-xs font-bold {% if log.direction == 'IN' %}bg-emerald-50 text-emerald-700 border border-emerald-200{% else %}bg-purple-50 text-purple-700 border border-purple-200{% endif %}">
+                                {{ log.get_direction_display }}
+                            </span>
+                        </td>
+                        <td class="p-3 text-slate-500 font-mono">{{ log.timestamp|date:"M d, Y H:i" }}</td>
+                        <td class="p-3 text-slate-500">{{ log.guard_notes|default:"Standard Entry/Exit" }}</td>
+                    </tr>
+                    {% empty %}
+                    <tr>
+                        <td colspan="4" class="text-center py-8 text-slate-400 text-sm">No gate logs recorded yet.</td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+{% endblock %}

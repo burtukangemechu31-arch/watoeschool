@@ -1,0 +1,88 @@
+<!-- templates/dashboard.html -->
+{% extends 'base.html' %}
+
+{% block title %}Central Command - Wato IMS{% endblock %}
+
+{% block content %}
+<div class="max-w-7xl mx-auto px-4 py-8">
+    <!-- Hero Banner -->
+    <div class="bg-gradient-to-r from-emerald-800 to-emerald-700 text-white rounded-3xl p-8 shadow-xl mb-8 flex flex-col md:flex-row justify-between items-center">
+        <div>
+            <span class="bg-emerald-600 text-emerald-100 text-xs font-bold px-3 py-1 rounded-full uppercase tracking-wider">Wato Secondary School</span>
+            <h1 class="text-3xl md:text-4xl font-black tracking-tight mt-3">School Information Management System</h1>
+            <p class="text-emerald-200 text-sm mt-2 max-w-xl">Unified platform for academic rosters, computer-based testing, digital libraries, finance, and campus security.</p>
+        </div>
+        <div class="mt-6 md:mt-0 flex gap-3">
+            <a href="/admin/" class="bg-white text-emerald-900 hover:bg-emerald-50 font-bold px-5 py-3 rounded-xl shadow text-sm transition">
+                Admin Control Panel
+            </a>
+        </div>
+    </div>
+
+    <!-- Quick Stats Grid -->
+    <div class="grid grid-cols-2 md:grid-cols-4 gap-4 mb-8">
+        <div class="bg-white border border-slate-200 rounded-2xl p-5 shadow-sm">
+            <p class="text-xs font-bold text-slate-400 uppercase tracking-wider">Enrolled Students</p>
+            <p class="text-2xl font-black text-slate-900 mt-1">{{ total_students }}</p>
+        </div>
+        <div class="bg-white border border-slate-200 rounded-2xl p-5 shadow-sm">
+            <p class="text-xs font-bold text-slate-400 uppercase tracking-wider">Active Exams</p>
+            <p class="text-2xl font-black text-slate-900 mt-1">{{ total_exams }}</p>
+        </div>
+        <div class="bg-white border border-slate-200 rounded-2xl p-5 shadow-sm">
+            <p class="text-xs font-bold text-slate-400 uppercase tracking-wider">Library Volumes</p>
+            <p class="text-2xl font-black text-slate-900 mt-1">{{ total_books }}</p>
+        </div>
+        <div class="bg-white border border-slate-200 rounded-2xl p-5 shadow-sm">
+            <p class="text-xs font-bold text-slate-400 uppercase tracking-wider">Class Sections</p>
+            <p class="text-2xl font-black text-slate-900 mt-1">{{ total_sections }}</p>
+        </div>
+    </div>
+
+    <!-- Module Navigation Grid -->
+    <h2 class="text-xl font-extrabold text-slate-900 mb-6">System Modules</h2>
+    <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+        <!-- Academics Card -->
+        <a href="/admin/academics/studentprofile/" class="bg-white border border-slate-200 hover:border-emerald-500 rounded-2xl p-6 shadow-sm transition group">
+            <div class="text-3xl mb-3">🎓</div>
+            <h3 class="font-bold text-slate-900 text-lg group-hover:text-emerald-700 transition">Academics & Rosters</h3>
+            <p class="text-xs text-slate-500 mt-1">Manage student profiles, grade levels, streams, sections, and subject enrollments.</p>
+        </a>
+
+        <!-- Exams Card -->
+        <a href="/exams/" class="bg-white border border-slate-200 hover:border-emerald-500 rounded-2xl p-6 shadow-sm transition group">
+            <div class="text-3xl mb-3">📝</div>
+            <h3 class="font-bold text-slate-900 text-lg group-hover:text-emerald-700 transition">Examinations & CBT</h3>
+            <p class="text-xs text-slate-500 mt-1">Configure timed assessments, bulk CSV question uploads, and auto-graded results.</p>
+        </a>
+
+        <!-- Library Card -->
+        <a href="/library/" class="bg-white border border-slate-200 hover:border-emerald-500 rounded-2xl p-6 shadow-sm transition group">
+            <div class="text-3xl mb-3">📚</div>
+            <h3 class="font-bold text-slate-900 text-lg group-hover:text-emerald-700 transition">Library & E-Resources</h3>
+            <p class="text-xs text-slate-500 mt-1">Track physical book inventory, borrowing logs, and downloadable digital PDF handouts.</p>
+        </a>
+
+        <!-- Finance Card -->
+        <a href="/finance/" class="bg-white border border-slate-200 hover:border-emerald-500 rounded-2xl p-6 shadow-sm transition group">
+            <div class="text-3xl mb-3">💰</div>
+            <h3 class="font-bold text-slate-900 text-lg group-hover:text-emerald-700 transition">Finance & Fee Collection</h3>
+            <p class="text-xs text-slate-500 mt-1">Manage tuition categories, payment obligations, and printable transaction receipts.</p>
+        </a>
+
+        <!-- Attendance Card -->
+        <a href="/attendance/" class="bg-white border border-slate-200 hover:border-emerald-500 rounded-2xl p-6 shadow-sm transition group">
+            <div class="text-3xl mb-3">🛡️</div>
+            <h3 class="font-bold text-slate-900 text-lg group-hover:text-emerald-700 transition">Attendance & Security</h3>
+            <p class="text-xs text-slate-500 mt-1">Monitor daily classroom attendance statuses and campus gate IN/OUT security logs.</p>
+        </a>
+
+        <!-- Admin Control Card -->
+        <a href="/admin/" class="bg-emerald-50 border border-emerald-200 hover:border-emerald-500 rounded-2xl p-6 shadow-sm transition group">
+            <div class="text-3xl mb-3">⚙️</div>
+            <h3 class="font-bold text-emerald-900 text-lg group-hover:text-emerald-700 transition">Django Unfold Admin</h3>
+            <p class="text-xs text-emerald-700 mt-1">Full backend database administration powered by Django Unfold UI.</p>
+        </a>
+    </div>
+</div>
+{% endblock %}

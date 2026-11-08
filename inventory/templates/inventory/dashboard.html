@@ -1,0 +1,100 @@
+<!-- inventory/templates/inventory/dashboard.html -->
+{% extends 'base.html' %}
+
+{% block title %}School Asset Inventory - Wato IMS{% endblock %}
+
+{% block content %}
+<div class="space-y-6">
+    <!-- Page Header & Actions -->
+    <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 bg-white p-6 rounded-xl shadow-sm border border-slate-200">
+        <div>
+            <h1 class="text-2xl font-black text-slate-900 tracking-tight flex items-center gap-2">
+                <span>📦</span> School Asset & Property Inventory
+            </h1>
+            <p class="text-sm text-slate-500 mt-1">Track physical equipment, laboratory assets, and facility hardware across campus locations.</p>
+        </div>
+        <div class="flex items-center gap-3">
+            <a href="/admin/inventory/schoolasset/add/" class="bg-emerald-600 hover:bg-emerald-700 text-white font-semibold text-sm px-4 py-2 rounded-lg shadow-sm transition flex items-center gap-2">
+                <span>+ Add New Asset</span>
+            </a>
+            <a href="/admin/inventory/assetcategory/" class="bg-slate-100 hover:bg-slate-200 text-slate-700 font-semibold text-sm px-4 py-2 rounded-lg transition">
+                Manage Categories
+            </a>
+        </div>
+    </div>
+
+    <!-- Search & Filter Card -->
+    <div class="bg-white p-4 rounded-xl shadow-sm border border-slate-200">
+        <form method="GET" class="flex flex-col sm:flex-row items-center gap-3">
+            <div class="relative flex-grow w-full">
+                <input type="text" name="q" placeholder="Search by asset name, serial number, or room location..." value="{{ query }}" class="w-full pl-4 pr-4 py-2 text-sm border border-slate-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-emerald-600 focus:border-emerald-600">
+            </div>
+            <div class="flex items-center gap-2 w-full sm:w-auto">
+                <button type="submit" class="w-full sm:w-auto bg-slate-900 hover:bg-slate-800 text-white text-sm font-medium px-5 py-2 rounded-lg transition">
+                    Search Inventory
+                </button>
+                {% if query %}
+                    <a href="{% url 'inventory_dashboard' %}" class="text-sm text-slate-500 hover:text-slate-700 underline px-2">Reset</a>
+                {% endif %}
+            </div>
+        </form>
+    </div>
+
+    <!-- Assets Data Table -->
+    <div class="bg-white rounded-xl shadow-sm border border-slate-200 overflow-hidden">
+        <div class="overflow-x-auto">
+            <table class="w-full text-left border-collapse">
+                <thead>
+                    <tr class="bg-slate-50 border-b border-slate-200 text-xs font-semibold text-slate-500 uppercase tracking-wider">
+                        <th class="py-3 px-4">Asset Name</th>
+                        <th class="py-3 px-4">Category</th>
+                        <th class="py-3 px-4">Serial Number</th>
+                        <th class="py-3 px-4">Location / Room</th>
+                        <th class="py-3 px-4">Condition</th>
+                        <th class="py-3 px-4 text-right">Cost (ETB)</th>
+                    </tr>
+                </thead>
+                <tbody class="divide-y divide-slate-200 text-sm">
+                    {% for asset in assets %}
+                    <tr class="hover:bg-slate-50/80 transition">
+                        <td class="py-3 px-4 font-bold text-slate-900">
+                            <a href="/admin/inventory/schoolasset/{{ asset.id }}/change/" class="hover:text-emerald-600 transition">
+                                {{ asset.name }}
+                            </a>
+                        </td>
+                        <td class="py-3 px-4 text-slate-600">{{ asset.category.name|default:"Uncategorized" }}</td>
+                        <td class="py-3 px-4 text-slate-600 font-mono text-xs">{{ asset.serial_number|default:"N/A" }}</td>
+                        <td class="py-3 px-4 text-slate-600">{{ asset.location }}</td>
+                        <td class="py-3 px-4">
+                            {% if asset.condition == 'Good' or asset.condition == 'New' %}
+                                <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-emerald-100 text-emerald-800">
+                                    {{ asset.condition }}
+                                </span>
+                            {% elif asset.condition == 'Fair' %}
+                                <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-amber-100 text-amber-800">
+                                    {{ asset.condition }}
+                                </span>
+                            {% else %}
+                                <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-rose-100 text-rose-800">
+                                    {{ asset.condition }}
+                                </span>
+                            {% endif %}
+                        </td>
+                        <td class="py-3 px-4 text-right font-medium text-slate-700">{{ asset.purchase_cost|default:"--" }}</td>
+                    </tr>
+                    {% empty %}
+                    <tr>
+                        <td colspan="6" class="py-12 text-center text-slate-400">
+                            <div class="flex flex-col items-center justify-center space-y-2">
+                                <span class="text-3xl">📭</span>
+                                <p class="text-sm font-medium">No assets registered in inventory matching your query.</p>
+                            </div>
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+{% endblock[cite: 12] %}

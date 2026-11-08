@@ -1,0 +1,45 @@
+<!-- academics/templates/academics/timetable_index.html -->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Select Section - Wato IMS</title>
+    <style>
+        body { font-family: 'Segoe UI', Arial, sans-serif; background: #f4f6f8; color: #333; padding: 40px; }
+        .sheet { max-width: 700px; margin: auto; background: #fff; border: 2px solid #1b5e20; padding: 30px; border-radius: 8px; box-shadow: 0 4px 12px rgba(0,0,0,0.08); }
+        .header { text-align: center; border-bottom: 2px solid #1b5e20; padding-bottom: 12px; margin-bottom: 20px; }
+        .header h1 { color: #1b5e20; font-size: 22px; margin: 0; text-transform: uppercase; }
+        ul { list-style: none; padding: 0; }
+        li { padding: 12px 15px; border-bottom: 1px solid #eee; display: flex; justify-content: space-between; align-items: center; }
+        li:hover { background: #f9f9f9; }
+        a.btn { background: #1b5e20; color: white; padding: 6px 14px; text-decoration: none; border-radius: 4px; font-size: 13px; font-weight: bold; }
+        a.btn:hover { background: #2e7d32; }
+        .back-link { display: inline-block; margin-bottom: 20px; color: #1b5e20; text-decoration: none; font-weight: bold; }
+    </style>
+</head>
+<body>
+
+    <div style="max-width: 700px; margin: auto;">
+        <a href="/" class="back-link">← Back to Central Dashboard</a>
+    </div>
+
+    <div class="sheet">
+        <div class="header">
+            <h1>Wato Secondary School</h1>
+            <p>Select a Section to View or Generate Timetable</p>
+        </div>
+
+        <ul>
+            {% for sec in sections %}
+            <li>
+                <span><strong>{{ sec.grade_level.name }} - {{ sec.name }}</strong> ({{ sec.program.get_name_display }})</span>
+                <a href="{% url 'view_timetable' sec.id %}" class="btn">View Timetable →</a>
+            </li>
+            {% empty %}
+            <li style="text-align: center; color: #777;">No sections created yet. Add sections via the Admin Portal.</li>
+            {% endfor %}
+        </ul>
+    </div>
+
+</body>
+</html>
